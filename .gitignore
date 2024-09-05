@@ -1,0 +1,35 @@
+# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
+
+# dependencies
+my-water-pal-front/node_modules/
+
+# Expo
+my-water-pal-front/.expo/
+my-water-pal-front/dist/
+my-water-pal-front/web-build/
+
+# Native
+my-water-pal-front/*.orig.*
+my-water-pal-front/*.jks
+my-water-pal-front/*.p8
+my-water-pal-front/*.p12
+my-water-pal-front/*.key
+my-water-pal-front/*.mobileprovision
+
+# Metro
+my-water-pal-front/.metro-health-check*
+
+# debug
+my-water-pal-front/npm-debug.*
+my-water-pal-front/yarn-debug.*
+my-water-pal-front/yarn-error.*
+
+# macOS
+my-water-pal-front/.DS_Store
+my-water-pal-front/*.pem
+
+# local env files
+my-water-pal-front/.env*.local
+
+# typescript
+my-water-pal-front/*.tsbuildinfo
