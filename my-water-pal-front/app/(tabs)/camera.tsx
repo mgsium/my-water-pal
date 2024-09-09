@@ -1,13 +1,14 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
 import { useState } from 'react';
-import { StyleSheet, Image, Platform, Text, View, Button, TouchableOpacity } from 'react-native';
+import { StyleSheet, Image, Platform, Text, View, TouchableOpacity } from 'react-native';
 
 import { Collapsible } from '@/components/Collapsible';
 import { ExternalLink } from '@/components/ExternalLink';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import { Button } from '@rneui/themed';
 
 export default function TabTwoScreen() {
   const [facing, setFacing] = useState<CameraType>('back');
@@ -21,9 +22,15 @@ export default function TabTwoScreen() {
   if (!permission.granted) {
     // Camera permissions are not granted yet.
     return (
-      <View style={styles.container}>
+      <View style={{...styles.container, width: "60%", marginLeft: "20%"}}>
         <Text style={styles.message}>We need your permission to show the camera</Text>
-        <Button onPress={requestPermission} title="grant permission" />
+        <Button 
+          onPress={requestPermission} 
+          title="Grant Permission" 
+          titleStyle={{ fontFamily: "SUSE-600", fontSize: 20 }}
+          buttonStyle={{ borderRadius: 10, paddingVertical: 15 }}
+
+        />
       </View>
     );
   }
@@ -140,11 +147,12 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   message: {
     textAlign: 'center',
     paddingBottom: 10,
+    fontFamily: "SUSE-500"
   },
   camera: {
     flex: 1,
