@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Platform, View, ScrollView, Text, TouchableOpacity, ActivityIndicator, RefreshControl} from 'react-native';
+import { Image, StyleSheet, Platform, View, ScrollView, Text, TouchableOpacity, ActivityIndicator, RefreshControl, Linking} from 'react-native';
 
 import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
@@ -16,6 +16,7 @@ import QRCode from 'react-native-qrcode-svg';
 import { LineChart } from 'react-native-chart-kit';
 
 import * as Clipboard from 'expo-clipboard';
+import { useSession } from '../ctx';
 
 type State =  { 
   UserId: string, 
@@ -32,7 +33,8 @@ type State =  {
   flow_rate: number,
   volume: number,
   summaryMode: number,
-  copyingToClipboard: boolean
+  copyingToClipboard: boolean,
+  activeEvent: any
 }
 
 const config = {
@@ -53,6 +55,17 @@ const config = {
   }
 }
 
+const SignOutBtn = () => {
+  const { signOut } = useSession();
+
+  return <Button 
+    title={<Ionicons name="arrow-back-circle" size={30}/>}
+    buttonStyle={{ backgroundColor: "white", borderRadius: 40 }}
+    containerStyle={{ flex: 1, alignSelf: "flex-end" }}
+    onPress={signOut}
+  />
+}
+
 export default class HomeScreen extends Component<{}, State> {
 
   constructor(props: any) {
@@ -71,7 +84,8 @@ export default class HomeScreen extends Component<{}, State> {
       flow_rate: -1,
       volume: -1,
       summaryMode: 0,
-      copyingToClipboard: false
+      copyingToClipboard: false,
+      activeEvent: null
     }
 
     this.getUsageData(false);
@@ -226,6 +240,10 @@ export default class HomeScreen extends Component<{}, State> {
     this.setState({ showSourceSettings: showSourceSettings });
   } 
 
+  setActiveEvent = async (e: any) => {
+    if (!e || e[0].type === 0) { this.setState({ activeEvent: e }); }
+  }
+
   deleteSource = async (i: number) => {
     const sourceToDelete = this.state.UsageData[i];
     await this.setState({ deletingState : true });
@@ -280,6 +298,18 @@ export default class HomeScreen extends Component<{}, State> {
             <RefreshControl refreshing={this.state.loadingSources} onRefresh={this.getUsageData} />
           }
           >
+          <View style={{ flex: 1, flexDirection: "row", gap: 20, marginBottom: 25, marginTop: 65 }}>
+            <SignOutBtn/>
+            <Text style={{ fontFamily: "montserrat-800", flex: 3, fontSize: 37, color: "white", textAlign: "center", letterSpacing: -2 }}>
+              mywaterpal
+            </Text>
+            <Button 
+              title={<Ionicons name="logo-github" size={30} color="white"/>}
+              buttonStyle={{ backgroundColor: "black", borderRadius: 40 }}
+              containerStyle={{ flex: 1, alignSelf: "flex-end" }}
+              onPress={() => Linking.openURL('https://github.com/mgsium/my-water-pal')}
+            />
+          </View>
           <ThemedView style={styles.titleContainer}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, paddingTop: 25 }}>
               <Text style={{ fontSize: 18, fontFamily: "SUSE-600", flex: 1, textAlign: "center" }}>
@@ -384,7 +414,11 @@ export default class HomeScreen extends Component<{}, State> {
                 >
                 {
                   sourceData.events.slice(0, sourceData["limit"]).map((x : any, i: any) => (
-                    <View key={x.timestamp} style={{ flexDirection: 'column', padding: 5, paddingHorizontal: 20, flex: 1 }}>
+                    <TouchableOpacity 
+                      key={x.timestamp} 
+                      style={{ flexDirection: 'column', padding: 5, paddingHorizontal: 20, flex: 1 }}
+                      onPress={() => { this.setActiveEvent([sourceData, i]) }}
+                    >
                       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>               
                         {
                           sourceData.type !== 0
@@ -404,7 +438,7 @@ export default class HomeScreen extends Component<{}, State> {
                      <ThemedText style={{ fontSize: 12, color: "#707070", marginLeft: 5 }}>
                         {(new Date(parseInt(x.timestamp))).toDateString()} - {moment(new Date(parseInt(x.timestamp))).fromNow()}
                      </ThemedText>
-                    </View>
+                    </TouchableOpacity>
                   ))
                 }
                 </ScrollView>
@@ -590,6 +624,42 @@ export default class HomeScreen extends Component<{}, State> {
               />
           </ThemedView>
         </BottomSheet>
+        <BottomSheet 
+          isVisible={!!this.state.activeEvent} 
+          onBackdropPress={() => this.setActiveEvent(null)}
+        >
+          <ThemedView style={{ backgroundColor: "white", width: "100%", height: 400, borderTopRightRadius: 40, borderTopLeftRadius: 40, padding: 30, paddingTop: 40, flexDirection: "column" }}>
+            <View style={{ flex: 1, flexDirection: "column", paddingHorizontal: 20, gap: 10 }}>
+              <View style={{ flexDirection: "row" }}>
+              { this.state.activeEvent && this.state.activeEvent[0].type == 1 ? <Ionicons name="water" color="#1ca3ec" size={25}/>
+                                      : <Ionicons name="cube" color="orange" size={25}/> }
+                <ThemedText style={{ fontFamily: "SUSE-600", fontSize: 22 }}>
+                  &nbsp;&nbsp;{
+                  this.state.activeEvent 
+                  && (this.state.activeEvent[0].type === 0 ?
+                    this.state.activeEvent[0]["events"][this.state.activeEvent[1]].name
+                    : "Water"
+                  )}
+                </ThemedText>
+              </View>
+              <View style={{ flexDirection: "row" }}>
+                <Ionicons name="water" color="#1ca3ec" size={25}/>
+                <ThemedText style={{ fontFamily: "SUSE-600", fontSize: 22 }}>
+                  &nbsp;&nbsp;{this.state.activeEvent 
+                  && this.state.activeEvent[0]["events"][this.state.activeEvent[1]].volume.toFixed(2)}L Used
+                </ThemedText>
+              </View>
+              <ThemedText style={{ fontFamily: "SUSE-700", fontSize: 22, marginTop: 15 }}>
+                Estimate Notes
+              </ThemedText>
+              <ScrollView nestedScrollEnabled>
+                <ThemedText style={{ fontFamily: "SUSE-500", fontSize: 15, color: "grey" }}>
+                    {this.state.activeEvent && this.state.activeEvent[0]["events"][this.state.activeEvent[1]].description}
+                </ThemedText>
+              </ScrollView>
+            </View>
+          </ThemedView>
+        </BottomSheet>
       </ThemedView>
     );
   }
@@ -601,7 +671,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 80,
     marginBottom: -15,
     borderColor: "black",
-    marginTop: 60,
+    // marginTop: 60,
     opacity: .8,
     flex: 1 
   },

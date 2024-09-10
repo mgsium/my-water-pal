@@ -97,7 +97,7 @@ export default function TabTwoScreen() {
     });
   
     const str = (message.content[0] as any)["text"];
-    console.log(str);
+    // console.log(str);
 
     // Parse Sections of the repsonse
     const scratchpad_re = /<scratchpad>([\s\S]*?)<\/scratchpad>/;
@@ -107,6 +107,8 @@ export default function TabTwoScreen() {
     const scratchpad = str.match(scratchpad_re)[1];
     const volume = parseInt(str.match(volume_re)[1]);
     const object = str.match(object_re)[1];
+
+    console.log(scratchpad);
 
     setTempImageData({ scratchpad: scratchpad, volume: volume, name: object, base64: b64 });
   }
