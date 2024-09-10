@@ -33,3 +33,5 @@ my-water-pal-front/.env*.local
 
 # typescript
 my-water-pal-front/*.tsbuildinfo
+
+lambdas/*/node_modules/

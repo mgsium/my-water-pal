@@ -23,7 +23,7 @@ export default function TabTwoScreen() {
   const [uploadingTempImage, setUploadingTempImage] = useState(false);
 
   const client = new Anthropic({
-    apiKey: process.env['ANTHROPIC_API_KEY'], // This is the default and can be omitted
+    apiKey: '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' // process.env['ANTHROPIC_API_KEY'], // This is the default and can be omitted
   });
 
   if (!permission) {
