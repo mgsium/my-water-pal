@@ -22,6 +22,7 @@ export default function Root({ children }: PropsWithChildren) {
         {/* Using raw CSS styles as an escape-hatch to ensure the background color never flickers in dark-mode. */}
         <style dangerouslySetInnerHTML={{ __html: responsiveBackground }} />
         {/* Add any additional <head> elements that you want globally available on web... */}
+        <style id="bootsplash-style"  dangerouslySetInnerHTML={{ __html: bootsplash }} />
       </head>
       <body>{children}</body>
     </html>
@@ -36,4 +37,23 @@ body {
   body {
     background-color: #000;
   }
+}`;
+
+const bootsplash = `
+#bootsplash {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #101010;
+}
+#bootsplash-logo {
+    content: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPg0KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBkPSJNOCAxNkwzLjU0MjIzIDEyLjMzODNDMS45MzI3OCAxMS4wMTYyIDEgOS4wNDI4NyAxIDYuOTYwMDVDMSAzLjExNjEyIDQuMTU2MDcgMCA4IDBDMTEuODQzOSAwIDE1IDMuMTE2MTIgMTUgNi45NjAwNUMxNSA5LjA0Mjg3IDE0LjA2NzIgMTEuMDE2MiAxMi40NTc4IDEyLjMzODNMOCAxNlpNMyA2SDVDNi4xMDQ1NyA2IDcgNi44OTU0MyA3IDhWOUwzIDcuNVY2Wk0xMSA2QzkuODk1NDMgNiA5IDYuODk1NDMgOSA4VjlMMTMgNy41VjZIMTFaIiBmaWxsPSIjMDAwMDAwIi8+DQo8L3N2Zz4=");
+    width: 100px;
+    height: 100px;
 }`;
